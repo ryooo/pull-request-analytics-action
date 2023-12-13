@@ -16,7 +16,7 @@ export const createPullRequestQualityTable = (
     .filter(
       (user) =>
         data[user]?.[date]?.merged ||
-        data[user]?.[date]?.discussions ||
+        // data[user]?.[date]?.discussions ||
         data[user]?.[date]?.reviewComments ||
         data["total"]?.[date]?.reviewsConducted?.[user]?.["CHANGES_REQUESTED"]
     )
@@ -27,21 +27,21 @@ export const createPullRequestQualityTable = (
         data["total"]?.[date]?.reviewsConducted?.[user]?.[
           "CHANGES_REQUESTED"
         ]?.toString() || "0",
-        data[user]?.[date]?.discussions?.toString() || "0",
+        // data[user]?.[date]?.discussions?.toString() || "0",
         data[user]?.[date]?.reviewComments?.toString() || "0",
       ];
     });
 
   return createBlock({
-    title: `Pull requests quality stats ${date}`,
+    title: `PR 品質 ${date}`,
     description:
-      "The table includes discussions and comments on closed pull requests.",
+      "",
     table: {
       headers: [
-        "user",
+        "ユーザー",
         totalMergedPrsHeader,
         requestChangesReceived,
-        discussionsHeader,
+        // discussionsHeader,
         commentsReceivedHeader,
       ],
       rows: tableRowsTotal,

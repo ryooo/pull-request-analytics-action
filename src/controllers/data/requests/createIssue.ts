@@ -7,7 +7,7 @@ export const createIssue = (markdown: string) => {
   const issueTitle =
     core.getInput("ISSUE_TITLE") ||
     process.env.ISSUE_TITLE ||
-    `Pull requests report(${format(new Date(), "d/MM/yyyy HH:mm")})`;
+    `Pull requests レポート(${format(new Date(), "yyyy-MM-d HH:mm")})`;
   const labels =
     getMultipleValuesInput("LABELS").filter(
       (label) => label && typeof label === "string"

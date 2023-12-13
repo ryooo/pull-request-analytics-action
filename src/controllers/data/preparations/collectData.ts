@@ -22,7 +22,7 @@ export const collectData = (
       ? parseISO(pullRequest.closed_at)
       : null;
 
-    const dateKey = closedDate ? format(closedDate, "M/y") : "invalidDate";
+    const dateKey = closedDate ? format(closedDate, "y年M月") : "invalidDate";
 
     const userKey = pullRequest.user.login || "invalidUser";
     if (!collection[userKey]) {

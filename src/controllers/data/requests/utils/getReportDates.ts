@@ -8,10 +8,10 @@ export const getReportDates = () => {
     process.env.REPORT_DATE_END || core.getInput("REPORT_DATE_END");
 
   const startDate = startReportDate
-    ? parse(startReportDate, "d/MM/yyyy", new Date())
+    ? parse(startReportDate, "yyyy/MM/d", new Date())
     : null;
   const endDate = endReportDate
-    ? parse(endReportDate, "d/MM/yyyy", new Date())
+    ? parse(endReportDate, "yyyy/MM/d", new Date())
     : null;
   return {
     startDate,

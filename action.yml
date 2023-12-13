@@ -22,10 +22,10 @@ inputs:
     required: false
     default: "100"
   REPORT_DATE_START:
-    description: "Start date for report(d/MM/yyyy)"
+    description: "Start date for report(yyyy/MM/d)"
     required: false
   REPORT_DATE_END:
-    description: "End date for report(d/MM/yyyy)"
+    description: "End date for report(yyyy/MM/d)"
     required: false
   CORE_HOURS_START:
     description: "Start time of core hours(HH:mm)"

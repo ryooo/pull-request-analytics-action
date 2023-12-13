@@ -29,14 +29,13 @@ export const createTimelineTable = (
     });
 
   const pullRequestTimeLine = createBlock({
-    title: `Pull requests timeline(${type}${
-      type === "percentile" ? percentile : ""
-    }) ${date}`,
+    title: `PRタイムライン(${type}${type === "percentile" ? percentile : ""
+      }) ${date}`,
     description:
-      "**Time to review** - time from PR creation to first review. \n**Time to approve** - time from PR creation to first approval without requested changes. \n**Time to merge** - time from PR creation to merge.",
+      "**レビューまでの時間** - PRの作成から最初のレビューまでの時間。 \n**承認までの時間** - PRの作成から変更が要求されない最初の承認までの時間。 \n**マージまでの時間** - PRの作成からマージまでの時間。",
     table: {
       headers: [
-        "user",
+        "ユーザー",
         timeToReviewHeader,
         timeToApproveHeader,
         timeToMergeHeader,

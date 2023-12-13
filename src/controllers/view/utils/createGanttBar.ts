@@ -18,6 +18,9 @@ export const createGanttBar = ({
   title: string;
   sections: Section[];
 }) => {
+  if (sections.length === 0) {
+    return ''
+  }
   return `
 \`\`\`mermaid
 gantt
@@ -25,19 +28,18 @@ title ${title}
 dateFormat X
 axisFormat %s
 ${sections
-  .map((section) => {
-    return `section ${section.name}
+      .map((section) => {
+        return `section ${section.name}
                 ${section.bars
-                  .map(
-                    (bar) =>
-                      `${bar.name} :${bar.type ? `${bar.type},` : ""} ${
-                        bar.state ? `${bar.state},` : ""
-                      } ${bar.start}, ${bar.end}`
-                  )
-                  .join("\n")}
+            .map(
+              (bar) =>
+                `${bar.name} :${bar.type ? `${bar.type},` : ""} ${bar.state ? `${bar.state},` : ""
+                } ${bar.start}, ${bar.end}`
+            )
+            .join("\n")}
         `;
-  })
-  .join("\n")}
+      })
+      .join("\n")}
 \`\`\`
     `;
 };

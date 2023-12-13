@@ -22,30 +22,25 @@ export const createReviewTable = (
       return [
         `**${user}**`,
         data[user]?.[date]?.merged?.toString() || "0",
-        data[user]?.[date]?.discussionsConducted?.toString() || "0",
         data[user]?.[date]?.commentsConducted?.toString() || "0",
-        `${
-          data[user]?.[
-            date
-          ]?.reviewsConducted?.total?.CHANGES_REQUESTED?.toString() || 0
-        } / ${
-          data[user]?.[date]?.reviewsConducted?.total?.COMMENTED?.toString() ||
-          0
-        } / ${
-          data[user]?.[date]?.reviewsConducted?.total?.APPROVED?.toString() || 0
+        `${data[user]?.[
+          date
+        ]?.reviewsConducted?.total?.CHANGES_REQUESTED?.toString() || 0
+        } / ${data[user]?.[date]?.reviewsConducted?.total?.COMMENTED?.toString() ||
+        0
+        } / ${data[user]?.[date]?.reviewsConducted?.total?.APPROVED?.toString() || 0
         }`,
       ];
     });
 
   return createBlock({
-    title: `Pull requests review stats ${date}`,
+    title: `Pull requests レビュー ${date}`,
     description:
-      "**Changes requested / Comments / Approvals** - number of Reviews conducted by user. For a single pull request, only one review of each status will be counted for a user.",
+      "**変更要求数 / コメント数 / 承認数** - ユーザーが行ったレビューの数。単一のプルリクエストの場合、ユーザーごとに各ステ​​ータスのレビューが1件だけカウントされます。",
     table: {
       headers: [
-        "user",
+        "ユーザー",
         totalMergedPrsHeader,
-        discussionsConductedHeader,
         commentsConductedHeader,
         reviewTypesHeader,
       ],

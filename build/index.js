@@ -36,7 +36,7 @@ const collectData = (data) => {
         const closedDate = pullRequest.closed_at
             ? (0, date_fns_1.parseISO)(pullRequest.closed_at)
             : null;
-        const dateKey = closedDate ? (0, date_fns_1.format)(closedDate, "M/y") : "invalidDate";
+        const dateKey = closedDate ? (0, date_fns_1.format)(closedDate, "y年M月") : "invalidDate";
         const userKey = pullRequest.user.login || "invalidUser";
         if (!collection[userKey]) {
             collection[userKey] = {};
@@ -706,7 +706,7 @@ const utils_1 = __nccwpck_require__(12290);
 const createIssue = (markdown) => {
     const issueTitle = core.getInput("ISSUE_TITLE") ||
         process.env.ISSUE_TITLE ||
-        `Pull requests report(${(0, date_fns_1.format)(new Date(), "d/MM/yyyy HH:mm")})`;
+        `Pull requests レポート(${(0, date_fns_1.format)(new Date(), "yyyy-MM-d HH:mm")})`;
     const labels = (0, utils_1.getMultipleValuesInput)("LABELS").filter((label) => label && typeof label === "string") || [];
     const assignees = (0, utils_1.getMultipleValuesInput)("ASSIGNEES").filter((assignee) => assignee && typeof assignee === "string") || [];
     octokit_1.octokit.rest.issues.create({
@@ -1092,10 +1092,10 @@ const getReportDates = () => {
     const startReportDate = process.env.REPORT_DATE_START || core.getInput("REPORT_DATE_START");
     const endReportDate = process.env.REPORT_DATE_END || core.getInput("REPORT_DATE_END");
     const startDate = startReportDate
-        ? (0, date_fns_1.parse)(startReportDate, "d/MM/yyyy", new Date())
+        ? (0, date_fns_1.parse)(startReportDate, "yyyy/MM/d", new Date())
         : null;
     const endDate = endReportDate
-        ? (0, date_fns_1.parse)(endReportDate, "d/MM/yyyy", new Date())
+        ? (0, date_fns_1.parse)(endReportDate, "yyyy/MM/d", new Date())
         : null;
     return {
         startDate,
@@ -1255,6 +1255,8 @@ const createMarkdown = (data) => {
     const content = dates.map((date) => {
         if (!data.total[date]?.merged)
             return "";
+        if (date != "total")
+            return "";
         const timelineContent = (0, utils_2.getMultipleValuesInput)("AGGREGATE_VALUE_METHODS")
             .filter((method) => ["average", "median", "percentile"].includes(method))
             .map((type) => {
@@ -1278,8 +1280,8 @@ const createMarkdown = (data) => {
     `;
     });
     return `
-## Pull Request report
-This report based on ${data.total?.total?.closed || 0} last updated PRs. To learn more about the project and its configuration, please visit [Pull request analytics action](https://github.com/AlexSim93/pull-request-analytics-action).
+## Pull Request レポート
+このレポートは ${data.total?.total?.closed || 0} 件のPRsに基づいています。 READMEは[Pull request analytics action](https://github.com/AlexSim93/pull-request-analytics-action)にて参照ください。
   ${(0, utils_1.createConfigParamsCode)()}
     ${content.join("\n")}
   `;
@@ -1309,20 +1311,20 @@ Object.defineProperty(exports, "createMarkdown", ({ enumerable: true, get: funct
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.requestChangesReceived = exports.reviewTypesHeader = exports.commentsReceivedHeader = exports.commentsConductedHeader = exports.discussionsConductedHeader = exports.discussionsHeader = exports.reviewProvidedHeader = exports.reviewCommentsHeader = exports.additionsDeletionsHeader = exports.totalOpenedPrsHeader = exports.totalMergedPrsHeader = exports.timeToMergeHeader = exports.timeToApproveHeader = exports.timeToReviewHeader = void 0;
-exports.timeToReviewHeader = "Time to review";
-exports.timeToApproveHeader = "Time to approve";
-exports.timeToMergeHeader = "Time to merge";
-exports.totalMergedPrsHeader = "Total merged PRs";
-exports.totalOpenedPrsHeader = "Total opened PRs";
-exports.additionsDeletionsHeader = "Additions/Deletions";
-exports.reviewCommentsHeader = "Total comments";
-exports.reviewProvidedHeader = "Reviews conducted";
+exports.timeToReviewHeader = "レビューまでの時間";
+exports.timeToApproveHeader = "承認までの時間";
+exports.timeToMergeHeader = "マージまでの時間";
+exports.totalMergedPrsHeader = "マージPR数";
+exports.totalOpenedPrsHeader = "作成PR数";
+exports.additionsDeletionsHeader = "追加/削除";
+exports.reviewCommentsHeader = "コメント数";
+exports.reviewProvidedHeader = "レビュー数";
 exports.discussionsHeader = "Discussions received";
 exports.discussionsConductedHeader = "Discussions conducted";
-exports.commentsConductedHeader = "Comments conducted";
-exports.commentsReceivedHeader = "Comments received";
-exports.reviewTypesHeader = "Changes requested / Comments / Approvals";
-exports.requestChangesReceived = "Changes requested received";
+exports.commentsConductedHeader = "コメント 発言数";
+exports.commentsReceivedHeader = "コメント 被発言数";
+exports.reviewTypesHeader = "変更要求数 / コメント数 / 承認数";
+exports.requestChangesReceived = "被変更要求数";
 
 
 /***/ }),
@@ -1385,28 +1387,18 @@ exports.createConfigParamsCode = void 0;
 const core = __importStar(__nccwpck_require__(42186));
 const createConfigParamsCode = () => {
     return `
-Below are the settings applied for this report:
-\`\`\`
-GITHUB_OWNERS_REPOS: ${process.env.GITHUB_OWNERS_REPOS || core.getInput("GITHUB_OWNERS_REPOS")}
-GITHUB_REPO_FOR_ISSUE: ${process.env.GITHUB_REPO_FOR_ISSUE || core.getInput("GITHUB_REPO_FOR_ISSUE")}
-GITHUB_OWNER_FOR_ISSUE: ${process.env.GITHUB_OWNER_FOR_ISSUE ||
-        core.getInput("GITHUB_OWNER_FOR_ISSUE")}
-AMOUNT: ${process.env.AMOUNT || core.getInput("AMOUNT")}
-CORE_HOURS_START: ${process.env.CORE_HOURS_START || core.getInput("CORE_HOURS_START")}
-CORE_HOURS_END: ${process.env.CORE_HOURS_END || core.getInput("CORE_HOURS_END")}
-TIMEZONE: ${process.env.TIMEZONE || core.getInput("TIMEZONE")}
-REPORT_DATE_START: ${process.env.REPORT_DATE_START || core.getInput("REPORT_DATE_START")}
-REPORT_DATE_END: ${process.env.REPORT_DATE_END || core.getInput("REPORT_DATE_END")}
-PERCENTILE: ${process.env.PERCENTILE || core.getInput("PERCENTILE")}
-AGGREGATE_VALUE_METHODS: ${process.env.AGGREGATE_VALUE_METHODS ||
+<details>
+  <summary>設定</summary>
+
+  \`\`\`
+  GITHUB_OWNERS_REPOS: ${process.env.GITHUB_OWNERS_REPOS || core.getInput("GITHUB_OWNERS_REPOS")}
+  REPORT_DATE_START: ${process.env.REPORT_DATE_START || core.getInput("REPORT_DATE_START")}
+  REPORT_DATE_END: ${process.env.REPORT_DATE_END || core.getInput("REPORT_DATE_END")}
+  PERCENTILE: ${process.env.PERCENTILE || core.getInput("PERCENTILE")}
+  AGGREGATE_VALUE_METHODS: ${process.env.AGGREGATE_VALUE_METHODS ||
         core.getInput("AGGREGATE_VALUE_METHODS")}
-LABELS: ${process.env.LABELS || core.getInput("LABELS")}
-ASSIGNEES: ${process.env.ASSIGNEES || core.getInput("ASSIGNEES")}
-HIDE_USERS: ${process.env.HIDE_USERS || core.getInput("HIDE_USERS")}
-SHOW_USERS: ${process.env.SHOW_USERS || core.getInput("SHOW_USERS")}
-INCLUDE_LABELS: ${process.env.INCLUDE_LABELS || core.getInput("INCLUDE_LABELS")}
-EXCLUDE_LABELS: ${process.env.EXCLUDE_LABELS || core.getInput("EXCLUDE_LABELS")}
-\`\`\`
+  \`\`\`
+</details>
     `;
 };
 exports.createConfigParamsCode = createConfigParamsCode;
@@ -1436,7 +1428,7 @@ const createDiscussionsPieChart = (data, users, date) => {
                 [value[0]]: value[1].received?.total,
             };
         }, {});
-        return (0, _1.createPieChart)(`Discussion's types ${data.user} ${date}`, values);
+        return (0, _1.createPieChart)(`ディスカッションタイプ ${data.user} ${date}`, values);
     })
         .join("\n");
 };
@@ -1453,6 +1445,9 @@ exports.createDiscussionsPieChart = createDiscussionsPieChart;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createGanttBar = void 0;
 const createGanttBar = ({ title, sections, }) => {
+    if (sections.length === 0) {
+        return '';
+    }
     return `
 \`\`\`mermaid
 gantt
@@ -1484,10 +1479,13 @@ exports.createGanttBar = createGanttBar;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createPieChart = void 0;
 const createPieChart = (title, values) => {
+    if (values.length === 0) {
+        return '';
+    }
     return `
 \`\`\`mermaid
 pie
-title ${title} 
+title ${title}
 ${Object.entries(values)
         .map(([key, value]) => {
         return `"${key}(${value})":${value}`;
@@ -1513,7 +1511,7 @@ const createBlock_1 = __nccwpck_require__(5787);
 const createPullRequestQualityTable = (data, users, date) => {
     const tableRowsTotal = users
         .filter((user) => data[user]?.[date]?.merged ||
-        data[user]?.[date]?.discussions ||
+        // data[user]?.[date]?.discussions ||
         data[user]?.[date]?.reviewComments ||
         data["total"]?.[date]?.reviewsConducted?.[user]?.["CHANGES_REQUESTED"])
         .map((user) => {
@@ -1521,19 +1519,19 @@ const createPullRequestQualityTable = (data, users, date) => {
             `**${user}**`,
             data[user]?.[date]?.merged?.toString() || "0",
             data["total"]?.[date]?.reviewsConducted?.[user]?.["CHANGES_REQUESTED"]?.toString() || "0",
-            data[user]?.[date]?.discussions?.toString() || "0",
+            // data[user]?.[date]?.discussions?.toString() || "0",
             data[user]?.[date]?.reviewComments?.toString() || "0",
         ];
     });
     return (0, createBlock_1.createBlock)({
-        title: `Pull requests quality stats ${date}`,
-        description: "The table includes discussions and comments on closed pull requests.",
+        title: `PR 品質 ${date}`,
+        description: "",
         table: {
             headers: [
-                "user",
+                "ユーザー",
                 constants_1.totalMergedPrsHeader,
                 constants_1.requestChangesReceived,
-                constants_1.discussionsHeader,
+                // discussionsHeader,
                 constants_1.commentsReceivedHeader,
             ],
             rows: tableRowsTotal,
@@ -1562,20 +1560,18 @@ const createReviewTable = (data, users, date) => {
         return [
             `**${user}**`,
             data[user]?.[date]?.merged?.toString() || "0",
-            data[user]?.[date]?.discussionsConducted?.toString() || "0",
             data[user]?.[date]?.commentsConducted?.toString() || "0",
             `${data[user]?.[date]?.reviewsConducted?.total?.CHANGES_REQUESTED?.toString() || 0} / ${data[user]?.[date]?.reviewsConducted?.total?.COMMENTED?.toString() ||
                 0} / ${data[user]?.[date]?.reviewsConducted?.total?.APPROVED?.toString() || 0}`,
         ];
     });
     return (0, createBlock_1.createBlock)({
-        title: `Pull requests review stats ${date}`,
-        description: "**Changes requested / Comments / Approvals** - number of Reviews conducted by user. For a single pull request, only one review of each status will be counted for a user.",
+        title: `Pull requests レビュー ${date}`,
+        description: "**変更要求数 / コメント数 / 承認数** - ユーザーが行ったレビューの数。単一のプルリクエストの場合、ユーザーごとに各ステ​​ータスのレビューが1件だけカウントされます。",
         table: {
             headers: [
-                "user",
+                "ユーザー",
                 constants_1.totalMergedPrsHeader,
-                constants_1.discussionsConductedHeader,
                 constants_1.commentsConductedHeader,
                 constants_1.reviewTypesHeader,
             ],
@@ -1600,7 +1596,7 @@ const constants_2 = __nccwpck_require__(76374);
 const createGanttBar_1 = __nccwpck_require__(27025);
 const createTimelineGanttBar = (data, type, users, date) => {
     return (0, createGanttBar_1.createGanttBar)({
-        title: `Pull requests timeline(${type}${type === "percentile" ? constants_1.percentile : ""}) ${date} / minutes`,
+        title: `PRタイムライン(${type}${type === "percentile" ? constants_1.percentile : ""}) ${date} / minutes`,
         sections: users
             .filter((user) => data[user]?.[date]?.[type]?.timeToReview &&
             data[user]?.[date]?.[type]?.timeToApprove &&
@@ -1656,11 +1652,11 @@ const createTimelineTable = (data, type, users, date) => {
         ];
     });
     const pullRequestTimeLine = (0, createBlock_1.createBlock)({
-        title: `Pull requests timeline(${type}${type === "percentile" ? constants_1.percentile : ""}) ${date}`,
-        description: "**Time to review** - time from PR creation to first review. \n**Time to approve** - time from PR creation to first approval without requested changes. \n**Time to merge** - time from PR creation to merge.",
+        title: `PRタイムライン(${type}${type === "percentile" ? constants_1.percentile : ""}) ${date}`,
+        description: "**レビューまでの時間** - PRの作成から最初のレビューまでの時間。 \n**承認までの時間** - PRの作成から変更が要求されない最初の承認までの時間。 \n**マージまでの時間** - PRの作成からマージまでの時間。",
         table: {
             headers: [
-                "user",
+                "ユーザー",
                 constants_2.timeToReviewHeader,
                 constants_2.timeToApproveHeader,
                 constants_2.timeToMergeHeader,
@@ -1700,11 +1696,11 @@ const createTotalTable = (data, users, date) => {
         ];
     });
     return (0, createBlock_1.createBlock)({
-        title: `Workload stats ${date}`,
-        description: "**Reviews conducted** - number of Reviews conducted. 1 PR may have only single review.",
+        title: `ワークロード ${date}`,
+        description: "**レビュー数** - 実施されたレビューの数。1つのPRには1つのレビューしかない場合があります。",
         table: {
             headers: [
-                "user",
+                "ユーザー",
                 constants_1.totalOpenedPrsHeader,
                 constants_1.totalMergedPrsHeader,
                 constants_1.additionsDeletionsHeader,
@@ -1731,7 +1727,11 @@ const date_fns_1 = __nccwpck_require__(73314);
 const formatMinutesDuration = (minutesDuration) => {
     const hours = Math.floor(minutesDuration / 60);
     const minutes = minutesDuration % 60;
-    return (0, date_fns_1.formatDuration)({ hours, minutes }, { format: ["hours", "minutes"] });
+    const text = (0, date_fns_1.formatDuration)({ hours, minutes }, { format: ["hours", "minutes"] });
+    return text
+        .replace("days", "日")
+        .replace("hours", "時間")
+        .replace("minutes", "分");
 };
 exports.formatMinutesDuration = formatMinutesDuration;
 

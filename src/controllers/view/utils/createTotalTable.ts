@@ -24,8 +24,7 @@ export const createTotalTable = (
         `**${user}**`,
         data[user]?.[date]?.opened?.toString() || "0",
         data[user]?.[date]?.merged?.toString() || "0",
-        `+${data[user]?.[date].additions || 0}/-${
-          data[user]?.[date].deletions || 0
+        `+${data[user]?.[date].additions || 0}/-${data[user]?.[date].deletions || 0
         }`,
         data[user]?.[date]?.totalReviewComments?.toString() || "0",
         data[user]?.[date]?.reviewsConducted?.total?.total?.toString() || "0",
@@ -33,12 +32,12 @@ export const createTotalTable = (
     });
 
   return createBlock({
-    title: `Workload stats ${date}`,
+    title: `ワークロード ${date}`,
     description:
-      "**Reviews conducted** - number of Reviews conducted. 1 PR may have only single review.",
+      "**レビュー数** - 実施されたレビューの数。1つのPRには1つのレビューしかない場合があります。",
     table: {
       headers: [
-        "user",
+        "ユーザー",
         totalOpenedPrsHeader,
         totalMergedPrsHeader,
         additionsDeletionsHeader,

@@ -32,6 +32,7 @@ export const createMarkdown = (
 
   const content = dates.map((date) => {
     if (!data.total[date]?.merged) return "";
+    if (date != "total") return "";
 
     const timelineContent = getMultipleValuesInput("AGGREGATE_VALUE_METHODS")
       .filter((method) => ["average", "median", "percentile"].includes(method))
@@ -71,10 +72,9 @@ export const createMarkdown = (
   });
 
   return `
-## Pull Request report
-This report based on ${
-    data.total?.total?.closed || 0
-  } last updated PRs. To learn more about the project and its configuration, please visit [Pull request analytics action](https://github.com/AlexSim93/pull-request-analytics-action).
+## Pull Request レポート
+このレポートは ${data.total?.total?.closed || 0
+    } 件のPRsに基づいています。 READMEは[Pull request analytics action](https://github.com/AlexSim93/pull-request-analytics-action)にて参照ください。
   ${createConfigParamsCode()}
     ${content.join("\n")}
   `;

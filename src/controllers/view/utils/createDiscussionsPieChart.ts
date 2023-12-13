@@ -22,7 +22,7 @@ export const createDiscussionsPieChart = (
             [value[0]]: value[1].received?.total,
           };
         }, {});
-      return createPieChart(`Discussion's types ${data.user} ${date}`, values);
+      return createPieChart(`ディスカッションタイプ ${data.user} ${date}`, values);
     })
     .join("\n");
 };
