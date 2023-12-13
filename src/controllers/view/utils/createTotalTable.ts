@@ -14,6 +14,11 @@ export const createTotalTable = (
   date: string
 ) => {
   const tableRowsTotal = users
+    .sort((a, b) => {
+      const aMerged = (data[a]?.[date]?.merged || 0);
+      const bMerged = (data[b]?.[date]?.merged || 0);
+      return bMerged - aMerged;
+    })
     .filter(
       (user) =>
         data[user]?.[date]?.opened ||
@@ -24,8 +29,7 @@ export const createTotalTable = (
         `**${user}**`,
         data[user]?.[date]?.opened?.toString() || "0",
         data[user]?.[date]?.merged?.toString() || "0",
-        `+${data[user]?.[date].additions || 0}/-${data[user]?.[date].deletions || 0
-        }`,
+        `+${(data[user]?.[date].additions || 0).toLocaleString()}/-${(data[user]?.[date].deletions || 0).toLocaleString()}`,
         data[user]?.[date]?.totalReviewComments?.toString() || "0",
         data[user]?.[date]?.reviewsConducted?.total?.total?.toString() || "0",
       ];

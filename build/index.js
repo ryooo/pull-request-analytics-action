@@ -1510,6 +1510,11 @@ const constants_1 = __nccwpck_require__(76374);
 const createBlock_1 = __nccwpck_require__(5787);
 const createPullRequestQualityTable = (data, users, date) => {
     const tableRowsTotal = users
+        .sort((a, b) => {
+        const aMerged = (data[a]?.[date]?.merged || 0);
+        const bMerged = (data[b]?.[date]?.merged || 0);
+        return bMerged - aMerged;
+    })
         .filter((user) => data[user]?.[date]?.merged ||
         // data[user]?.[date]?.discussions ||
         data[user]?.[date]?.reviewComments ||
@@ -1554,6 +1559,11 @@ const constants_1 = __nccwpck_require__(76374);
 const createBlock_1 = __nccwpck_require__(5787);
 const createReviewTable = (data, users, date) => {
     const tableRowsTotal = users
+        .sort((a, b) => {
+        const aMerged = (data[a]?.[date]?.merged || 0);
+        const bMerged = (data[b]?.[date]?.merged || 0);
+        return bMerged - aMerged;
+    })
         .filter((user) => data[user]?.[date]?.merged ||
         data[user]?.[date]?.reviewsConducted?.total?.total)
         .map((user) => {
@@ -1598,6 +1608,11 @@ const createTimelineGanttBar = (data, type, users, date) => {
     return (0, createGanttBar_1.createGanttBar)({
         title: `PRタイムライン(${type}${type === "percentile" ? constants_1.percentile : ""}) ${date} / minutes`,
         sections: users
+            .sort((a, b) => {
+            const aMerged = (data[a]?.[date]?.merged || 0);
+            const bMerged = (data[b]?.[date]?.merged || 0);
+            return bMerged - aMerged;
+        })
             .filter((user) => data[user]?.[date]?.[type]?.timeToReview &&
             data[user]?.[date]?.[type]?.timeToApprove &&
             data[user]?.[date]?.[type]?.timeToMerge)
@@ -1642,6 +1657,11 @@ const formatMinutesDuration_1 = __nccwpck_require__(98884);
 const createTimelineTable = (data, type, users, date) => {
     const tableRows = users
         .filter((user) => data[user]?.[date]?.merged)
+        .sort((a, b) => {
+        const aMerged = (data[a]?.[date]?.merged || 0);
+        const bMerged = (data[b]?.[date]?.merged || 0);
+        return bMerged - aMerged;
+    })
         .map((user) => {
         return [
             `**${user}**`,
@@ -1683,6 +1703,11 @@ const constants_1 = __nccwpck_require__(76374);
 const createBlock_1 = __nccwpck_require__(5787);
 const createTotalTable = (data, users, date) => {
     const tableRowsTotal = users
+        .sort((a, b) => {
+        const aMerged = (data[a]?.[date]?.merged || 0);
+        const bMerged = (data[b]?.[date]?.merged || 0);
+        return bMerged - aMerged;
+    })
         .filter((user) => data[user]?.[date]?.opened ||
         data[user]?.[date]?.reviewsConducted?.total?.total)
         .map((user) => {
@@ -1690,7 +1715,7 @@ const createTotalTable = (data, users, date) => {
             `**${user}**`,
             data[user]?.[date]?.opened?.toString() || "0",
             data[user]?.[date]?.merged?.toString() || "0",
-            `+${data[user]?.[date].additions || 0}/-${data[user]?.[date].deletions || 0}`,
+            `+${(data[user]?.[date].additions || 0).toLocaleString()}/-${(data[user]?.[date].deletions || 0).toLocaleString()}`,
             data[user]?.[date]?.totalReviewComments?.toString() || "0",
             data[user]?.[date]?.reviewsConducted?.total?.total?.toString() || "0",
         ];
@@ -1730,8 +1755,11 @@ const formatMinutesDuration = (minutesDuration) => {
     const text = (0, date_fns_1.formatDuration)({ hours, minutes }, { format: ["hours", "minutes"] });
     return text
         .replace("days", "日")
+        .replace("day", "日")
         .replace("hours", "時間")
-        .replace("minutes", "分");
+        .replace("hour", "時間")
+        .replace("minutes", "分")
+        .replace("minute", "分");
 };
 exports.formatMinutesDuration = formatMinutesDuration;
 

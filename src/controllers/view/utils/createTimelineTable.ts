@@ -18,6 +18,11 @@ export const createTimelineTable = (
 ) => {
   const tableRows = users
     .filter((user) => data[user]?.[date]?.merged)
+    .sort((a, b) => {
+      const aMerged = (data[a]?.[date]?.merged || 0);
+      const bMerged = (data[b]?.[date]?.merged || 0);
+      return bMerged - aMerged;
+    })
     .map((user) => {
       return [
         `**${user}**`,

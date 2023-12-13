@@ -18,6 +18,11 @@ export const createTimelineGanttBar = (
     title: `PRタイムライン(${type}${type === "percentile" ? percentile : ""
       }) ${date} / minutes`,
     sections: users
+      .sort((a, b) => {
+        const aMerged = (data[a]?.[date]?.merged || 0);
+        const bMerged = (data[b]?.[date]?.merged || 0);
+        return bMerged - aMerged;
+      })
       .filter(
         (user) =>
           data[user]?.[date]?.[type]?.timeToReview &&

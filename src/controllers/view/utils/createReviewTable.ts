@@ -13,6 +13,11 @@ export const createReviewTable = (
   date: string
 ) => {
   const tableRowsTotal = users
+    .sort((a, b) => {
+      const aMerged = (data[a]?.[date]?.merged || 0);
+      const bMerged = (data[b]?.[date]?.merged || 0);
+      return bMerged - aMerged;
+    })
     .filter(
       (user) =>
         data[user]?.[date]?.merged ||
